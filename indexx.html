@@ -1,0 +1,2727 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b111e" />
+  <title>PHYSIO-SCREEN | Ciencia Deportiva</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg-main: #0b111e;
+      --bg-card: #141c2f;
+      --bg-inset: #0e1525;
+      --border-subtle: #23304a;
+      --border-strong: #314266;
+      --emerald: #10b981;
+      --emerald-bright: #00d68f;
+      --emerald-dim: rgba(16, 185, 129, 0.14);
+      --blue: #2563eb;
+      --blue-hover: #1d4ed8;
+      --amber: #f59e0b;
+      --amber-dim: rgba(245, 158, 11, 0.16);
+      --red: #ef4444;
+      --red-dim: rgba(239, 68, 68, 0.16);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100dvh;
+      background-color: #060911;
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      overflow-x: hidden;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .ico {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+    .ico-lg {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* Contenedor Principal Mobile-First */
+    .app-shell {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100dvh;
+      margin: 0 auto;
+      background-color: var(--bg-main);
+      border-left: 1px solid var(--border-subtle);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      padding-bottom: env(safe-area-inset-bottom, 12px);
+    }
+
+    /* Encabezado Institucional */
+    .brand-header {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .brand-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand-logo-wrap {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #0e1525;
+      border: 1.5px solid var(--emerald);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
+    }
+
+    .brand-logo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .brand-logo-fallback {
+      font-weight: 900;
+      font-size: 13px;
+      color: var(--emerald-bright);
+      letter-spacing: -0.5px;
+    }
+
+    .brand-titles {
+      min-width: 0;
+    }
+
+    .brand-titles h1 {
+      font-size: 15.5px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-titles p {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--emerald-bright);
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      background: var(--bg-inset);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--amber);
+    }
+    .status-dot.active {
+      background: var(--emerald-bright);
+      box-shadow: 0 0 8px var(--emerald-bright);
+    }
+
+    /* Pantallas */
+    .screen {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      padding: 12px;
+      gap: 12px;
+      animation: fadeIn 0.18s ease-out;
+    }
+    .screen.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Tarjetas y Contenedores */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 12px;
+    }
+
+    .card-top-emerald { border-top: 3px solid var(--emerald); }
+    .card-top-amber { border-top: 3px solid var(--amber); }
+    .card-top-red { border-top: 3px solid var(--red); }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--emerald-bright);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .title-with-ico {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Botones */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 44px;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.08s ease, background 0.15s ease, border-color 0.15s ease;
+      text-align: center;
+      color: var(--text-primary);
+      background: var(--bg-inset);
+    }
+    .btn:active { transform: scale(0.98); }
+
+    .btn-sm {
+      min-height: 36px;
+      padding: 6px 10px;
+      font-size: 11.5px;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-block { width: 100%; }
+
+    .btn-blue {
+      background: var(--blue);
+      border-color: #3b82f6;
+      color: #ffffff;
+    }
+    .btn-blue:hover { background: var(--blue-hover); }
+
+    .btn-emerald {
+      background: var(--emerald);
+      border-color: var(--emerald-bright);
+      color: #04130d;
+      font-weight: 800;
+    }
+
+    .btn-amber {
+      background: var(--amber);
+      border-color: #fbbf24;
+      color: #160e02;
+      font-weight: 800;
+    }
+
+    .btn-red {
+      background: var(--red);
+      border-color: #f87171;
+      color: #ffffff;
+    }
+
+    .btn-ghost {
+      background: var(--bg-inset);
+      border-color: var(--border-subtle);
+      color: var(--text-primary);
+    }
+
+    /* Grids Responsivos */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    /* Formularios e Inputs */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .form-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .input, .select, .textarea {
+      width: 100%;
+      min-height: 40px;
+      background: var(--bg-inset);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      color: var(--text-primary);
+      font-size: 13px;
+      outline: none;
+    }
+    .input:focus, .select:focus, .textarea:focus {
+      border-color: var(--emerald);
+    }
+
+    /* Tarjetas de Protocolo en Inicio */
+    .protocol-card {
+      background: var(--bg-inset);
+      border: 1px solid var(--border-subtle);
+      border-top: 3px solid var(--emerald);
+      border-radius: var(--radius-lg);
+      padding: 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.15s, transform 0.1s;
+    }
+    .protocol-card:active {
+      transform: scale(0.98);
+      border-color: var(--emerald-bright);
+    }
+    .protocol-card.amber-accent { border-top-color: var(--amber); }
+    .protocol-card.blue-accent { border-top-color: #3b82f6; }
+
+    .protocol-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: var(--emerald-dim);
+      color: var(--emerald-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2px;
+    }
+    .protocol-card.amber-accent .protocol-badge {
+      background: var(--amber-dim);
+      color: var(--amber);
+    }
+    .protocol-card.blue-accent .protocol-badge {
+      background: rgba(59, 130, 246, 0.16);
+      color: #60a5fa;
+    }
+
+    .protocol-title {
+      font-size: 12.5px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+    .protocol-desc {
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.35;
+    }
+
+    /* Barra Superior de Cabinas */
+    .cabin-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    /* Contenedor de Video + Canvas Interactivo */
+    .viewport-box {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      max-height: 54dvh;
+      background: #05080f;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-strong);
+      overflow: hidden;
+      touch-action: none;
+    }
+    .viewport-box.tall {
+      aspect-ratio: 3 / 4;
+      max-height: 58dvh;
+    }
+
+    .viewport-box video,
+    .viewport-box canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Lupa de Precision 2x */
+    .loupe-box {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 104px;
+      height: 104px;
+      border-radius: 50%;
+      border: 3px solid var(--emerald-bright);
+      background: #05080f;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.75);
+      z-index: 25;
+      display: none;
+      pointer-events: none;
+    }
+    .loupe-box canvas { width: 100%; height: 100%; }
+    .loupe-label {
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(11, 17, 30, 0.88);
+      color: var(--emerald-bright);
+      font-size: 9px;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    /* HUD de Cronometro Superpuesto */
+    .hud-timer {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(11, 17, 30, 0.88);
+      border: 1px solid var(--border-strong);
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-family: "Courier New", monospace;
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--emerald-bright);
+      letter-spacing: 1px;
+      z-index: 15;
+      pointer-events: none;
+    }
+
+    .hud-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(11, 17, 30, 0.85);
+      border: 1px solid var(--border-strong);
+      padding: 4px 9px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-primary);
+      z-index: 15;
+      pointer-events: none;
+    }
+
+    /* Superposicion de Estimulo Reactivo (Pantalla Completa) */
+    .stimulus-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: #0b111e;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+    }
+    .stimulus-overlay.active { display: flex; }
+    .stimulus-arrow {
+      font-size: 130px;
+      font-weight: 900;
+      line-height: 1;
+      color: #0b111e;
+    }
+
+    /* Lista de Atletas */
+    .athlete-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: var(--bg-inset);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 10px;
+      margin-bottom: 8px;
+    }
+    .athlete-item.selected {
+      border-color: var(--emerald);
+      background: rgba(16, 185, 129, 0.08);
+    }
+    .athlete-meta h4 { font-size: 13px; font-weight: 700; }
+    .athlete-meta span { font-size: 11px; color: var(--text-secondary); }
+
+    /* KPI Cards */
+    .kpi-card {
+      background: var(--bg-inset);
+      border: 1px solid var(--border-subtle);
+      border-top: 3px solid var(--emerald);
+      border-radius: var(--radius-md);
+      padding: 10px 8px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+    }
+    .kpi-card.amber { border-top-color: var(--amber); }
+    .kpi-card.red { border-top-color: var(--red); }
+
+    .kpi-title {
+      font-size: 9.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      letter-spacing: 0.4px;
+    }
+    .kpi-value {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--text-primary);
+    }
+    .kpi-status {
+      font-size: 9.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--emerald-bright);
+    }
+    .kpi-card.amber .kpi-status { color: var(--amber); }
+    .kpi-card.red .kpi-status { color: var(--red); }
+
+    /* Semaforo Horizontal */
+    .traffic-light {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-inset);
+      border: 1px solid var(--border-subtle);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 700;
+    }
+    .tl-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      opacity: 0.25;
+    }
+    .tl-dot.on { opacity: 1; box-shadow: 0 0 8px currentColor; }
+
+    /* Modales */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 7, 15, 0.82);
+      z-index: 80;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 12px;
+    }
+    .modal-backdrop.active { display: flex; }
+    .modal-sheet {
+      width: 100%;
+      max-width: 460px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      max-height: 85dvh;
+      overflow-y: auto;
+    }
+
+    /* Tabs */
+    .tab-bar {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-inset);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 7px 6px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: var(--bg-card);
+      color: var(--emerald-bright);
+      border: 1px solid var(--border-strong);
+    }
+
+    /* Tabla compacta */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.5px;
+    }
+    .data-table th, .data-table td {
+      padding: 7px 6px;
+      border-bottom: 1px solid var(--border-subtle);
+      text-align: left;
+    }
+    .data-table th {
+      color: var(--emerald-bright);
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    /* Pie de pagina */
+    .app-footer {
+      text-align: center;
+      font-size: 10px;
+      color: var(--text-muted);
+      padding: 10px 12px;
+      border-top: 1px solid var(--border-subtle);
+      margin-top: auto;
+    }
+
+    /* Optimizacion de Impresion / Reporte PDF */
+    @media print {
+      body, .app-shell {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        max-width: 100% !important;
+        border: none !important;
+      }
+      .no-print, .brand-header, .app-footer, .tab-bar {
+        display: none !important;
+      }
+      .screen { display: none !important; }
+      #screen-analysis {
+        display: flex !important;
+        padding: 0 !important;
+      }
+      .card, .kpi-card {
+        background: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        color: #0f172a !important;
+        break-inside: avoid;
+      }
+      .kpi-value, .section-title { color: #065f46 !important; }
+      .print-header-only {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #10b981;
+        padding-bottom: 10px;
+        margin-bottom: 12px;
+      }
+    }
+    .print-header-only { display: none; }
+  </style>
+</head>
+<body>
+
+<div class="app-shell">
+  <!-- ENCABEZADO INSTITUCIONAL -->
+  <header class="brand-header">
+    <div class="brand-left">
+      <div class="brand-logo-wrap">
+        <img
+          src="https://github.com/Alej811/Logo-cd/blob/main/Isologo%20de%20Ciencia%20Deportivapng_.png?raw=true"
+          alt="Isologo Ciencia Deportiva"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <span class="brand-logo-fallback" style="display:none;">CD</span>
+      </div>
+      <div class="brand-titles">
+        <h1>PHYSIO-SCREEN</h1>
+        <p id="headerSubtitle">Ciencia Deportiva &bull; Listo</p>
+      </div>
+    </div>
+    <div class="status-pill" id="camStatusPill">
+      <span class="status-dot" id="camStatusDot"></span>
+      <span id="camStatusText">C&Aacute;MARA OFF</span>
+    </div>
+  </header>
+
+  <!-- =========================================================
+       PANTALLA 1: INICIO Y SELECCION DE PROTOCOLO
+  ========================================================= -->
+  <main id="screen-home" class="screen active">
+    <div class="card card-top-emerald">
+      <div class="section-title">
+        <span class="title-with-ico">
+          <svg class="ico" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Control de Hardware y Permisos
+        </span>
+        <span id="fpsBadge" style="color:var(--text-secondary);">-- FPS</span>
+      </div>
+      <button class="btn btn-blue btn-block" id="btnEnableHardware" onclick="initHardware()">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        <span id="btnEnableText">ACTIVAR C&Aacute;MARA Y AUDIO</span>
+      </button>
+      <p style="font-size:11px; color:var(--text-secondary); margin-top:8px;">
+        Atleta activo: <strong id="homeActiveAthlete" style="color:var(--emerald-bright);">Dev Sharma</strong>
+      </p>
+    </div>
+
+    <div class="section-title" style="margin-bottom:0;">
+      <span class="title-with-ico">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+        Protocolos de Evaluaci&oacute;n
+      </span>
+    </div>
+
+    <div class="grid-2">
+      <button class="protocol-card" onclick="openSprintScreen()">
+        <span class="protocol-badge">
+          <svg class="ico ico-lg" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 2h6"/><path d="M12 2v3"/></svg>
+        </span>
+        <span class="protocol-title">MODO 1: SPRINT LINEAL</span>
+        <span class="protocol-desc">Parciales 0m&ndash;5m&ndash;10m&ndash;20m, velocidad y lupa de calibraci&oacute;n.</span>
+      </button>
+
+      <button class="protocol-card amber-accent" onclick="openPhotocellScreen()">
+        <span class="protocol-badge">
+          <svg class="ico ico-lg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        </span>
+        <span class="protocol-title">MODO 2: FOTOC&Eacute;LULA</span>
+        <span class="protocol-desc">Doble paso Photo-Finish (Der/Izq) y Agilidad Reactiva.</span>
+      </button>
+    </div>
+
+    <button class="protocol-card blue-accent" onclick="openPostureScreen()">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span class="protocol-badge" style="flex-shrink:0;">
+          <svg class="ico ico-lg" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><path d="M12 7v7"/><path d="M7 10h10"/><path d="M9 21l3-7 3 7"/></svg>
+        </span>
+        <div>
+          <div class="protocol-title">MODO 3: BIOMEC&Aacute;NICA POSTURAL</div>
+          <div class="protocol-desc">Fotogrametr&iacute;a computarizada, marcadores anat&oacute;micos con lupa 2x, escala Px&harr;cm y goni&oacute;metro libre.</div>
+        </div>
+      </div>
+    </button>
+
+    <div class="grid-2">
+      <button class="btn btn-emerald" onclick="goScreen('screen-athletes')">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        ATLETAS / PLANTEL
+      </button>
+      <button class="btn btn-ghost" onclick="openAnalysisScreen()">
+        <svg class="ico" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        HISTORIAL Y REPORTES
+      </button>
+    </div>
+
+    <button class="btn btn-ghost btn-block" onclick="openModal('modal-engine')">
+      <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      AJUSTES DEL MOTOR DE DETECCI&Oacute;N
+    </button>
+  </main>
+
+  <!-- =========================================================
+       PANTALLA 2: ATLETAS (PLANTEL)
+  ========================================================= -->
+  <section id="screen-athletes" class="screen">
+    <div class="card card-top-emerald">
+      <div class="section-title">
+        <span class="title-with-ico">
+          <svg class="ico" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Gesti&oacute;n de Plantel
+        </span>
+        <span id="athleteCountBadge">0 atletas</span>
+      </div>
+      <div class="form-group">
+        <input type="text" id="athleteSearch" class="input" placeholder="Buscar atleta por nombre o categor&iacute;a..." oninput="renderAthletes()" />
+      </div>
+      <div class="grid-2">
+        <button class="btn btn-emerald btn-sm" onclick="openModal('modal-add-athlete')">+ AGREGAR ATLETA</button>
+        <button class="btn btn-ghost btn-sm" onclick="openModal('modal-import-csv')">IMPORTAR CSV</button>
+      </div>
+    </div>
+
+    <div id="athletesListContainer" style="flex:1; overflow-y:auto;"></div>
+
+    <button class="btn btn-ghost btn-block" onclick="goScreen('screen-home')">
+      &larr; Volver al Inicio
+    </button>
+  </section>
+
+  <!-- =========================================================
+       PANTALLA 3: SPRINT LINEAL (VISTA LATERAL + LUPA 2X)
+  ========================================================= -->
+  <section id="screen-sprint" class="screen">
+    <div class="cabin-topbar">
+      <button class="btn btn-ghost btn-sm" onclick="stopAndGoHome()">&larr; Salir</button>
+      <select id="sprintAthleteSelect" class="select" style="width:auto; flex:1; min-height:36px; font-size:12px;" onchange="selectAthleteById(this.value)"></select>
+      <select id="sprintTestSelect" class="select" style="width:auto; min-height:36px; font-size:12px;" onchange="updateSprintConfig()">
+        <option value="10">10m (5m Split)</option>
+        <option value="20">20m (10m Split)</option>
+        <option value="30">30m (15m Split)</option>
+        <option value="5">5m Aceleraci&oacute;n</option>
+      </select>
+    </div>
+
+    <div class="viewport-box" id="sprintViewport">
+      <video id="sprintVideo" autoplay playsinline muted></video>
+      <canvas id="sprintCanvas"></canvas>
+
+      <div class="loupe-box" id="sprintLoupe">
+        <canvas id="sprintLoupeCanvas" width="104" height="104"></canvas>
+        <span class="loupe-label" id="sprintLoupeLabel">0m Salida</span>
+      </div>
+
+      <div class="hud-badge" id="sprintStateBadge">ESPERA</div>
+      <div class="hud-timer" id="sprintTimerHud">0.000 s</div>
+    </div>
+
+    <div class="grid-3">
+      <button class="btn btn-ghost btn-sm" onclick="toggleSprintDirection()" id="btnSprintDir">
+        Izq &rarr; Der
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="captureBackground('sprint')">
+        Calibrar Fondo
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="activateSprintGoniometer()">
+        Medir &Aacute;ngulo
+      </button>
+    </div>
+
+    <div class="grid-2">
+      <button class="btn btn-emerald" id="btnSprintArm" onclick="toggleSprintArm()">
+        ARMAR / INICIAR
+      </button>
+      <button class="btn btn-blue" onclick="simulateSprintRun()">
+        Simular Pasada
+      </button>
+    </div>
+
+    <div class="grid-2">
+      <button class="btn btn-ghost btn-sm" onclick="openScaleModal('sprint')">
+        Calibrar Escala (Px&harr;m)
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="openAnalysisScreen()">
+        &Uacute;ltimo Resultado
+      </button>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       PANTALLA 4: FOTOCELULA (DOBLE PASO PHOTO-FINISH + REACTIVA)
+  ========================================================= -->
+  <section id="screen-photocell" class="screen">
+    <div class="cabin-topbar">
+      <button class="btn btn-ghost btn-sm" onclick="stopAndGoHome()">&larr; Salir</button>
+      <select id="photoAthleteSelect" class="select" style="width:auto; flex:1; min-height:36px; font-size:12px;" onchange="selectAthleteById(this.value)"></select>
+      <select id="photoModeSelect" class="select" style="width:auto; min-height:36px; font-size:12px;" onchange="switchPhotocellMode()">
+        <option value="double">Doble Paso (Photo-Finish)</option>
+        <option value="reactive">Reactiva (Est&iacute;mulo)</option>
+      </select>
+    </div>
+
+    <div id="photoDoubleControls" class="grid-3">
+      <button class="btn btn-emerald btn-sm" id="btnProfileRight" onclick="setTurnProfile('Derecho')">
+        Perfil Derecho
+      </button>
+      <button class="btn btn-ghost btn-sm" id="btnProfileLeft" onclick="setTurnProfile('Izquierdo')">
+        Perfil Izquierdo
+      </button>
+      <select id="photoDistSelect" class="select" style="min-height:36px; font-size:11.5px;">
+        <option value="20">COD 10+10m (20m)</option>
+        <option value="10">5-0-5 (10m)</option>
+        <option value="20p">5-10-5 Pro (20m)</option>
+      </select>
+    </div>
+
+    <div id="photoReactiveControls" class="grid-3" style="display:none;">
+      <select id="reactiveStimType" class="select" style="min-height:36px; font-size:11.5px;">
+        <option value="arrows">Flechas (&larr; / &rarr;)</option>
+        <option value="colors">Colores (Rojo/Azul)</option>
+      </select>
+      <button class="btn btn-ghost btn-sm" onclick="adjustReactiveGateWidth()">
+        Ajustar Gate
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="flipCamera()">
+        Voltear C&aacute;m.
+      </button>
+    </div>
+
+    <div class="viewport-box" id="photoViewport">
+      <video id="photoVideo" autoplay playsinline muted></video>
+      <canvas id="photoCanvas"></canvas>
+
+      <div class="loupe-box" id="photoLoupe">
+        <canvas id="photoLoupeCanvas" width="104" height="104"></canvas>
+        <span class="loupe-label">L&iacute;nea Fotoc&eacute;lula</span>
+      </div>
+
+      <div class="hud-badge" id="photoStateBadge">LISTO</div>
+      <div class="hud-timer" id="photoTimerHud">0.000 s</div>
+    </div>
+
+    <div class="grid-2">
+      <button class="btn btn-amber" id="btnPhotoLaunch" onclick="launchPhotocellTest()">
+        LANZAR PRUEBA
+      </button>
+      <button class="btn btn-blue" onclick="simulatePhotocellRun()">
+        Simular Prueba
+      </button>
+    </div>
+
+    <div class="grid-2">
+      <button class="btn btn-ghost btn-sm" onclick="captureBackground('photo')">
+        Calibrar Fondo
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="openAnalysisScreen()">
+        Ver An&aacute;lisis / Asimetr&iacute;a
+      </button>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       PANTALLA 6: BIOMECANICA POSTURAL (FOTOGRAMETRIA IA)
+  ========================================================= -->
+  <section id="screen-posture" class="screen">
+    <div class="cabin-topbar">
+      <button class="btn btn-ghost btn-sm" onclick="stopAndGoHome()">&larr; Salir</button>
+      <select id="postureAthleteSelect" class="select" style="width:auto; flex:1; min-height:36px; font-size:12px;" onchange="selectAthleteById(this.value)"></select>
+      <button class="btn btn-ghost btn-sm" onclick="openModal('modal-anatomy-guide')">Gu&iacute;a</button>
+    </div>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="setPosturePlane('Anterior', this)">Anterior</button>
+      <button class="tab-btn" onclick="setPosturePlane('Posterior', this)">Posterior</button>
+      <button class="tab-btn" onclick="setPosturePlane('Lateral', this)">Lateral</button>
+      <button class="tab-btn" onclick="setPosturePlane('Libre', this)">Goni&oacute;metro</button>
+    </div>
+
+    <div class="viewport-box tall" id="postureViewport">
+      <video id="postureVideo" autoplay playsinline muted></video>
+      <canvas id="postureCanvas"></canvas>
+
+      <div class="loupe-box" id="postureLoupe">
+        <canvas id="postureLoupeCanvas" width="104" height="104"></canvas>
+        <span class="loupe-label" id="postureLoupeLabel">Punto Anat&oacute;mico</span>
+      </div>
+
+      <div class="hud-badge" id="posturePlaneBadge">PLANO: ANTERIOR</div>
+    </div>
+
+    <div class="grid-3">
+      <button class="btn btn-ghost btn-sm" onclick="capturePostureSnapshot()">
+        Capturar
+      </button>
+      <label class="btn btn-ghost btn-sm" style="cursor:pointer;">
+        Subir Foto
+        <input type="file" accept="image/*" style="display:none;" onchange="handlePostureImageUpload(event)" />
+      </label>
+      <button class="btn btn-ghost btn-sm" onclick="autoDetectPosturePoints()">
+        Detectar IA
+      </button>
+    </div>
+
+    <div class="grid-2">
+      <button class="btn btn-ghost btn-sm" onclick="openScaleModal('posture')">
+        Escala Px &harr; cm
+      </button>
+      <button class="btn btn-ghost btn-sm" id="btnToggleComplementary" onclick="toggleComplementaryAngle()">
+        &Aacute;ngulo Interno
+      </button>
+    </div>
+
+    <button class="btn btn-emerald btn-block" onclick="generatePostureReport()">
+      GENERAR REPORTE POSTURAL
+    </button>
+  </section>
+
+  <!-- =========================================================
+       PANTALLA 5: ANALISIS, AUDITORIA Y REPORTES PDF/CSV
+  ========================================================= -->
+  <section id="screen-analysis" class="screen">
+    <div class="print-header-only">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <img
+          src="https://github.com/Alej811/Logo-cd/blob/main/Isologo%20de%20Ciencia%20Deportivapng_.png?raw=true"
+          alt="Ciencia Deportiva"
+          style="width:42px; height:42px; border-radius:50%; object-fit:cover;"
+        />
+        <div>
+          <h2 style="font-size:18px; font-weight:900;">PHYSIO-SCREEN &bull; INFORME BIOMEC&Aacute;NICO</h2>
+          <p style="font-size:12px; color:#059669; font-weight:700;">CIENCIA DEPORTIVA &mdash; EVALUACI&Oacute;N DE RENDIMIENTO Y POSTURA</p>
+        </div>
+      </div>
+      <div style="text-align:right; font-size:11px;">
+        <div id="printDate"></div>
+        <div id="printAthleteName" style="font-weight:800;"></div>
+      </div>
+    </div>
+
+    <div class="cabin-topbar no-print">
+      <button class="btn btn-ghost btn-sm" onclick="goScreen('screen-home')">&larr; Inicio</button>
+      <span style="font-weight:800; font-size:13px; color:var(--emerald-bright);">AN&Aacute;LISIS E INFORME</span>
+      <button class="btn btn-ghost btn-sm" onclick="returnToLastCamera()">C&aacute;mara</button>
+    </div>
+
+    <div class="tab-bar no-print">
+      <button class="tab-btn active" onclick="switchAnalysisTab('detail', this)">Detalle Intento</button>
+      <button class="tab-btn" onclick="switchAnalysisTab('history', this)">Historial (<span id="historyCountTab">0</span>)</button>
+      <button class="tab-btn" onclick="switchAnalysisTab('radar', this)">Perfil Radar</button>
+    </div>
+
+    <!-- SUB-VISTA 1: DETALLE DEL INTENTO -->
+    <div id="analysis-tab-detail" style="display:flex; flex-direction:column; gap:10px;">
+      <div class="card card-top-emerald">
+        <div class="section-title">
+          <span id="resultProtocolTitle">SPRINT LINEAL 10M</span>
+          <span id="resultAthleteTag" style="color:var(--text-primary);">Dev Sharma</span>
+        </div>
+
+        <div style="background:var(--bg-inset); border:1px solid var(--border-subtle); border-radius:10px; overflow:hidden; margin-bottom:8px;">
+          <canvas id="resultSnapshotCanvas" width="440" height="240" style="width:100%; height:auto; display:block;"></canvas>
+          <div class="no-print" style="padding:6px 10px; display:flex; align-items:center; gap:8px; border-top:1px solid var(--border-subtle);">
+            <span style="font-size:10px; color:var(--text-secondary); white-space:nowrap;">Cuadro:</span>
+            <input type="range" id="frameScrubber" min="0" max="10" value="10" style="flex:1;" oninput="scrubResultFrame(this.value)" />
+            <span id="frameScrubberLabel" style="font-size:10px; font-weight:700; color:var(--emerald-bright);">Meta</span>
+          </div>
+        </div>
+
+        <div class="grid-3" id="resultKpiGrid">
+          <div class="kpi-card">
+            <span class="kpi-title" id="kpi1Label">TIEMPO TOTAL</span>
+            <span class="kpi-value" id="kpi1Val">2.18 s</span>
+            <span class="kpi-status" id="kpi1Status">&Oacute;PTIMO</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-title" id="kpi2Label">VEL. MEDIA / PICO</span>
+            <span class="kpi-value" id="kpi2Val">4.59 m/s</span>
+            <span class="kpi-status" id="kpi2Status">16.5 KM/H</span>
+          </div>
+          <div class="kpi-card amber" id="kpi3Card">
+            <span class="kpi-title" id="kpi3Label">ASIMETR&Iacute;A / SPLIT</span>
+            <span class="kpi-value" id="kpi3Val">1.22 s</span>
+            <span class="kpi-status" id="kpi3Status">0&ndash;5M SPLIT</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">
+          <span>Desglose Cinem&aacute;tico / Segmentario</span>
+          <span class="traffic-light" id="globalTrafficLight">
+            <span class="tl-dot on" style="background:var(--emerald-bright); color:var(--emerald-bright);"></span>
+            <span class="tl-dot" style="background:var(--amber); color:var(--amber);"></span>
+            <span class="tl-dot" style="background:var(--red); color:var(--red);"></span>
+            <span id="tlLabel">BALANCE &Oacute;PTIMO</span>
+          </span>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Tramo / Segmento</th>
+              <th>Valor</th>
+              <th>Referencia</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="resultBreakdownBody"></tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="section-title">
+          <span>Diagn&oacute;stico y Observaciones T&eacute;cnicas</span>
+        </div>
+        <textarea id="resultNotes" class="textarea" rows="2" placeholder="A&ntilde;ade observaciones biomec&aacute;nicas, causas de asimetr&iacute;a o recomendaciones de entrenamiento..."></textarea>
+      </div>
+    </div>
+
+    <!-- SUB-VISTA 2: HISTORIAL DE SESION -->
+    <div id="analysis-tab-history" style="display:none; flex-direction:column; gap:10px;">
+      <div class="card">
+        <div class="section-title">
+          <span>Registros Guardados en Sesi&oacute;n</span>
+          <button class="btn btn-red btn-sm" onclick="clearSessionHistory()">Limpiar</button>
+        </div>
+        <div id="historyListContainer"></div>
+      </div>
+    </div>
+
+    <!-- SUB-VISTA 3: GRAFICO RADAR DE PERFIL -->
+    <div id="analysis-tab-radar" style="display:none; flex-direction:column; gap:10px;">
+      <div class="card card-top-emerald">
+        <div class="section-title">
+          <span>Perfil Neuromuscular y Postural (Radar)</span>
+        </div>
+        <div style="position:relative; width:100%; height:260px;">
+          <canvas id="radarChartCanvas"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones de Accion y Exportacion -->
+    <div class="grid-3 no-print">
+      <button class="btn btn-emerald btn-sm" onclick="saveCurrentRecord()">
+        Guardar
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="exportCSV()">
+        CSV
+      </button>
+      <button class="btn btn-blue btn-sm" onclick="exportPDF()">
+        Reporte PDF
+      </button>
+    </div>
+  </section>
+
+  <!-- PIE DE PAGINA -->
+  <footer class="app-footer">
+    PHYSIO-SCREEN &bull; Ciencia Deportiva &bull; Lcdo. Maykol Jayaro
+  </footer>
+</div>
+
+<!-- =========================================================
+     SUPERPOSICION ESTIMULO REACTIVO (PANTALLA COMPLETA)
+========================================================= -->
+<div id="stimulusOverlay" class="stimulus-overlay">
+  <div id="stimulusCountdown" style="font-size:84px; font-weight:900; color:var(--amber);">3</div>
+  <div id="stimulusArrow" class="stimulus-arrow" style="display:none;">&larr;</div>
+  <p id="stimulusSubtext" style="margin-top:16px; font-size:15px; font-weight:800; color:#64748b;">PREP&Aacute;RATE EN EL CENTRO</p>
+  <button class="btn btn-red" style="margin-top:32px;" onclick="abortReactiveTest()">ABORTAR</button>
+</div>
+
+<!-- =========================================================
+     MODALES
+========================================================= -->
+<div id="modal-add-athlete" class="modal-backdrop">
+  <div class="modal-sheet">
+    <div class="section-title"><span>Nuevo Deportista</span></div>
+    <div class="form-group">
+      <label class="form-label">Nombre Completo</label>
+      <input type="text" id="newAthName" class="input" placeholder="Ej. Carlos Mendoza" />
+    </div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label">Categor&iacute;a / Deporte</label>
+        <input type="text" id="newAthCat" class="input" placeholder="Ej. F&uacute;tbol Sub-20" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Estatura (cm)</label>
+        <input type="number" id="newAthHeight" class="input" placeholder="175" value="175" />
+      </div>
+    </div>
+    <div class="grid-2">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-athlete')">Cancelar</button>
+      <button class="btn btn-emerald" onclick="addAthlete()">Guardar Atleta</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-import-csv" class="modal-backdrop">
+  <div class="modal-sheet">
+    <div class="section-title"><span>Importar Lista de Atletas</span></div>
+    <p style="font-size:11px; color:var(--text-secondary); margin-bottom:8px;">
+      Pega una lista con formato: <code>Nombre, Categor&iacute;a, Estatura(cm)</code> (uno por l&iacute;nea).
+    </p>
+    <textarea id="csvPasteArea" class="textarea" rows="5" placeholder="Andre Williams, Velocidad, 181&#10;Dev Sharma, Futbol, 176&#10;Lily Chen, Atletismo, 168"></textarea>
+    <div class="grid-2" style="margin-top:10px;">
+      <button class="btn btn-ghost" onclick="closeModal('modal-import-csv')">Cancelar</button>
+      <button class="btn btn-emerald" onclick="importAthletesCSV()">Importar Lista</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-scale" class="modal-backdrop">
+  <div class="modal-sheet">
+    <div class="section-title"><span>Calibraci&oacute;n de Escala Real</span></div>
+    <p style="font-size:12px; color:var(--text-secondary); margin-bottom:10px;">
+      Ingresa la distancia real conocida entre las marcas de referencia en pantalla para convertir p&iacute;xeles a unidades m&eacute;tricas exactas.
+    </p>
+    <div class="form-group">
+      <label class="form-label" id="scaleUnitLabel">Distancia de referencia (metros o cm):</label>
+      <input type="number" step="0.01" id="scaleRealValue" class="input" value="10" />
+    </div>
+    <div class="grid-2">
+      <button class="btn btn-ghost" onclick="closeModal('modal-scale')">Cancelar</button>
+      <button class="btn btn-emerald" onclick="applyScaleCalibration()">Aplicar Escala</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-engine" class="modal-backdrop">
+  <div class="modal-sheet">
+    <div class="section-title"><span>Ajustes del Motor &Oacute;ptico</span></div>
+    <div class="form-group">
+      <label class="form-label">Modo de Detecci&oacute;n en Vivo</label>
+      <select id="engineModeSelect" class="select">
+        <option value="optical">&Oacute;ptico Ultrarr&aacute;pido (Cruce de Zona - M&aacute;ximos FPS)</option>
+        <option value="hybrid">H&iacute;brido Biomec&aacute;nico (Centro de Masa + Esqueleto)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Sensibilidad de Disparo (<span id="sensValLabel">28</span>)</label>
+      <input type="range" id="sensitivitySlider" min="10" max="65" value="28" oninput="document.getElementById('sensValLabel').textContent=this.value" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">C&aacute;mara Predeterminada</label>
+      <select id="cameraFacingSelect" class="select">
+        <option value="environment">Trasera (Tr&iacute;pode en cancha)</option>
+        <option value="user">Frontal (Auto-evaluaci&oacute;n / Est&iacute;mulo)</option>
+      </select>
+    </div>
+    <button class="btn btn-emerald btn-block" onclick="closeModal('modal-engine')">Listo</button>
+  </div>
+</div>
+
+<div id="modal-anatomy-guide" class="modal-backdrop">
+  <div class="modal-sheet">
+    <div class="section-title"><span>Gu&iacute;a de Puntos Anat&oacute;micos</span></div>
+    <ul style="font-size:12px; color:var(--text-secondary); padding-left:16px; display:flex; flex-direction:column; gap:6px;">
+      <li><strong style="color:var(--text-primary);">Plano Anterior / Posterior:</strong> Trago de orejas, acromion derecho/izquierdo, espinas il&iacute;acas anterosuperiores (EIAS), centro de r&oacute;tulas y mal&eacute;olos.</li>
+      <li><strong style="color:var(--text-primary);">Plano Lateral:</strong> Conducto auditivo externo, acromion, troc&aacute;nter mayor, c&oacute;ndilo femoral lateral y mal&eacute;olo externo (l&iacute;nea de plomada).</li>
+      <li><strong style="color:var(--text-primary);">Lupa 2x:</strong> Mant&eacute;n presionado cualquier punto rojo para ver el zoom ampliado en la esquina superior izquierda.</li>
+    </ul>
+    <button class="btn btn-emerald btn-block" style="margin-top:12px;" onclick="closeModal('modal-anatomy-guide')">Entendido</button>
+  </div>
+</div>
+
+<script>
+/* ==========================================================================
+   ESTADO GLOBAL DE LA APLICACION (PHYSIO-SCREEN - 100% ASCII SAFE)
+========================================================================== */
+const APP = {
+  stream: null,
+  audioCtx: null,
+  facingMode: 'environment',
+  activeCameraScreen: 'screen-sprint',
+  lastFrameTime: performance.now(),
+  fps: 60,
+
+  athletes: JSON.parse(localStorage.getItem('ps_athletes') || 'null') || [
+    { id: 'a1', name: 'Dev Sharma', category: 'F\u00fatbol \u2022 Extremo', height: 176 },
+    { id: 'a2', name: 'Andre Williams', category: 'Atletismo \u2022 100m', height: 182 },
+    { id: 'a3', name: 'Lily Chen', category: 'V\u00f3ley \u2022 Central', height: 179 },
+    { id: 'a4', name: 'Jacob Taber', category: 'B\u00e1squet \u2022 Base', height: 185 }
+  ],
+  selectedAthleteId: localStorage.getItem('ps_selected_athlete') || 'a1',
+
+  records: JSON.parse(localStorage.getItem('ps_records') || '[]'),
+  currentRecord: null,
+  frameBuffer: [],
+
+  sprint: {
+    distance: 10,
+    direction: 'L2R',
+    lines: [0.16, 0.50, 0.84],
+    draggingIdx: -1,
+    armed: false,
+    state: 'IDLE',
+    startTime: 0,
+    splitTime: 0,
+    finishTime: 0,
+    bgFrame: null,
+    pxPerMeter: 42,
+    goniometerActive: false,
+    goniometerPts: [
+      { x: 0.45, y: 0.35, label: 'Hombro' },
+      { x: 0.50, y: 0.55, label: 'Cadera' },
+      { x: 0.56, y: 0.78, label: 'Rodilla' }
+    ],
+    dragGonioIdx: -1
+  },
+
+  photo: {
+    subMode: 'double',
+    profile: 'Derecho',
+    lineX: 0.50,
+    draggingLine: false,
+    gateWidth: 0.32,
+    armed: false,
+    state: 'IDLE',
+    startTime: 0,
+    reactionSplit: 0,
+    finishTime: 0,
+    bgFrame: null,
+    reactiveDir: '\u2190',
+    reactiveTimer: null
+  },
+
+  posture: {
+    plane: 'Anterior',
+    img: null,
+    complementary: false,
+    pxPerCm: 2.8,
+    draggingIdx: -1,
+    points: []
+  },
+
+  radarChart: null
+};
+
+const POSTURE_TEMPLATES = {
+  Anterior: [
+    { x: 0.38, y: 0.28, label: 'Acromion Der.' },
+    { x: 0.62, y: 0.29, label: 'Acromion Izq.' },
+    { x: 0.41, y: 0.48, label: 'EIAS Der.' },
+    { x: 0.59, y: 0.48, label: 'EIAS Izq.' },
+    { x: 0.42, y: 0.70, label: 'R\u00f3tula Der.' },
+    { x: 0.58, y: 0.70, label: 'R\u00f3tula Izq.' }
+  ],
+  Posterior: [
+    { x: 0.38, y: 0.28, label: '\u00c1ngulo Esc\u00e1pula D' },
+    { x: 0.62, y: 0.28, label: '\u00c1ngulo Esc\u00e1pula I' },
+    { x: 0.42, y: 0.49, label: 'EIPS Der.' },
+    { x: 0.58, y: 0.49, label: 'EIPS Izq.' },
+    { x: 0.43, y: 0.85, label: 'Tend\u00f3n Aquiles D' },
+    { x: 0.57, y: 0.85, label: 'Tend\u00f3n Aquiles I' }
+  ],
+  Lateral: [
+    { x: 0.50, y: 0.16, label: 'Trago Oreja' },
+    { x: 0.49, y: 0.28, label: 'Acromion' },
+    { x: 0.51, y: 0.49, label: 'Troc\u00e1nter Mayor' },
+    { x: 0.50, y: 0.69, label: 'C\u00f3ndilo Rodilla' },
+    { x: 0.49, y: 0.88, label: 'Mal\u00e9olo Externo' }
+  ],
+  Libre: [
+    { x: 0.42, y: 0.35, label: 'Punto A' },
+    { x: 0.52, y: 0.52, label: 'V\u00e9rtice (Eje)' },
+    { x: 0.44, y: 0.72, label: 'Punto C' }
+  ]
+};
+
+/* ==========================================================================
+   NAVEGACION Y UTILIDADES DE AUDIO / HARDWARE
+========================================================================== */
+function goScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  syncAthleteSelectors();
+  if (screenId === 'screen-athletes') renderAthletes();
+  if (screenId === 'screen-analysis') renderAnalysisScreen();
+}
+
+function stopAndGoHome() {
+  APP.sprint.armed = false;
+  APP.sprint.state = 'IDLE';
+  APP.photo.armed = false;
+  APP.photo.state = 'IDLE';
+  goScreen('screen-home');
+}
+
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+function initAudio() {
+  if (!APP.audioCtx) {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext) APP.audioCtx = new AudioContext();
+  }
+  if (APP.audioCtx && APP.audioCtx.state === 'suspended') {
+    APP.audioCtx.resume();
+  }
+}
+
+function playBeep(freq = 880, duration = 0.12, type = 'sine') {
+  try {
+    initAudio();
+    if (!APP.audioCtx) return;
+    const osc = APP.audioCtx.createOscillator();
+    const gain = APP.audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, APP.audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.25, APP.audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, APP.audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(APP.audioCtx.destination);
+    osc.start();
+    osc.stop(APP.audioCtx.currentTime + duration);
+  } catch (e) {}
+}
+
+function playWhistle() {
+  playBeep(2850, 0.32, 'triangle');
+  setTimeout(() => playBeep(3100, 0.25, 'sine'), 60);
+}
+
+async function initHardware() {
+  initAudio();
+  playBeep(1040, 0.1);
+  APP.facingMode = document.getElementById('cameraFacingSelect').value;
+  try {
+    if (APP.stream) {
+      APP.stream.getTracks().forEach(t => t.stop());
+    }
+    APP.stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: APP.facingMode,
+        width: { ideal: 1280 },
+        height: { ideal: 720 },
+        frameRate: { ideal: 60 }
+      },
+      audio: false
+    });
+
+    ['sprintVideo', 'photoVideo', 'postureVideo'].forEach(vidId => {
+      const v = document.getElementById(vidId);
+      v.srcObject = APP.stream;
+    });
+
+    document.getElementById('camStatusDot').classList.add('active');
+    document.getElementById('camStatusText').textContent = 'C\u00c1MARA ACTIVA';
+    document.getElementById('btnEnableText').textContent = 'C\u00c1MARA Y AUDIO ACTIVOS';
+    document.getElementById('btnEnableHardware').classList.replace('btn-blue', 'btn-emerald');
+
+    if ('wakeLock' in navigator) {
+      navigator.wakeLock.request('screen').catch(() => {});
+    }
+  } catch (err) {
+    document.getElementById('camStatusText').textContent = 'MODO DEMO';
+    alert('No se pudo abrir la c\u00e1mara (requiere enlace HTTPS en GitHub Pages o navegador m\u00f3vil directo). Se activ\u00f3 el Audio y los botones "Simular" / "Subir Foto" para probar todas las funciones.');
+  }
+}
+
+async function flipCamera() {
+  APP.facingMode = APP.facingMode === 'environment' ? 'user' : 'environment';
+  document.getElementById('cameraFacingSelect').value = APP.facingMode;
+  await initHardware();
+}
+
+/* ==========================================================================
+   GESTION DE ATLETAS (PANTALLA 2)
+========================================================================== */
+function getSelectedAthlete() {
+  return APP.athletes.find(a => a.id === APP.selectedAthleteId) || APP.athletes[0];
+}
+
+function saveAthletesStorage() {
+  localStorage.setItem('ps_athletes', JSON.stringify(APP.athletes));
+  localStorage.setItem('ps_selected_athlete', APP.selectedAthleteId);
+  syncAthleteSelectors();
+}
+
+function syncAthleteSelectors() {
+  const ath = getSelectedAthlete();
+  if (ath) {
+    document.getElementById('homeActiveAthlete').textContent = ath.name;
+    document.getElementById('headerSubtitle').textContent = `Ciencia Deportiva \u2022 ${ath.name}`;
+  }
+  ['sprintAthleteSelect', 'photoAthleteSelect', 'postureAthleteSelect'].forEach(selId => {
+    const sel = document.getElementById(selId);
+    if (!sel) return;
+    sel.innerHTML = APP.athletes.map(a =>
+      `<option value="${a.id}" ${a.id === APP.selectedAthleteId ? 'selected' : ''}>${a.name}</option>`
+    ).join('');
+  });
+}
+
+function selectAthleteById(id) {
+  APP.selectedAthleteId = id;
+  saveAthletesStorage();
+  renderAthletes();
+}
+
+function renderAthletes() {
+  const q = (document.getElementById('athleteSearch').value || '').toLowerCase();
+  const list = APP.athletes.filter(a =>
+    a.name.toLowerCase().includes(q) || a.category.toLowerCase().includes(q)
+  );
+  document.getElementById('athleteCountBadge').textContent = `${APP.athletes.length} atletas`;
+  const container = document.getElementById('athletesListContainer');
+  container.innerHTML = list.map(a => `
+    <div class="athlete-item ${a.id === APP.selectedAthleteId ? 'selected' : ''}">
+      <div class="athlete-meta" onclick="selectAthleteById('${a.id}')" style="cursor:pointer; flex:1;">
+        <h4>${a.name} ${a.id === APP.selectedAthleteId ? '<span style="color:var(--emerald-bright); font-size:10px;">\u25cf ACTIVO</span>' : ''}</h4>
+        <span>${a.category} \u2022 ${a.height} cm</span>
+      </div>
+      <div style="display:flex; gap:6px;">
+        <button class="btn btn-emerald btn-sm" onclick="selectAthleteById('${a.id}')">Elegir</button>
+        <button class="btn btn-red btn-sm" onclick="deleteAthlete('${a.id}')">Borrar</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addAthlete() {
+  const name = document.getElementById('newAthName').value.trim();
+  const category = document.getElementById('newAthCat').value.trim() || 'General';
+  const height = parseInt(document.getElementById('newAthHeight').value, 10) || 175;
+  if (!name) return;
+  const newObj = { id: 'a' + Date.now(), name, category, height };
+  APP.athletes.unshift(newObj);
+  APP.selectedAthleteId = newObj.id;
+  saveAthletesStorage();
+  renderAthletes();
+  document.getElementById('newAthName').value = '';
+  closeModal('modal-add-athlete');
+}
+
+function importAthletesCSV() {
+  const raw = document.getElementById('csvPasteArea').value.trim();
+  if (!raw) return;
+  raw.split('\n').forEach((line, idx) => {
+    const parts = line.split(',').map(s => s.trim());
+    if (parts[0]) {
+      APP.athletes.push({
+        id: 'csv_' + Date.now() + '_' + idx,
+        name: parts[0],
+        category: parts[1] || 'Plantel',
+        height: parseInt(parts[2], 10) || 175
+      });
+    }
+  });
+  saveAthletesStorage();
+  renderAthletes();
+  closeModal('modal-import-csv');
+}
+
+function deleteAthlete(id) {
+  if (APP.athletes.length <= 1) return;
+  APP.athletes = APP.athletes.filter(a => a.id !== id);
+  if (APP.selectedAthleteId === id) APP.selectedAthleteId = APP.athletes[0].id;
+  saveAthletesStorage();
+  renderAthletes();
+}
+
+/* ==========================================================================
+   MOTOR OPTICO DE DETECCION POR ZONA + LUPA 2X
+========================================================================== */
+const offscreenCanvas = document.createElement('canvas');
+offscreenCanvas.width = 160;
+offscreenCanvas.height = 120;
+const offCtx = offscreenCanvas.getContext('2d', { willReadFrequently: true });
+
+function captureBackground(target) {
+  const video = document.getElementById(target === 'sprint' ? 'sprintVideo' : 'photoVideo');
+  if (video && video.readyState >= 2) {
+    offCtx.drawImage(video, 0, 0, 160, 120);
+    const frame = offCtx.getImageData(0, 0, 160, 120);
+    if (target === 'sprint') APP.sprint.bgFrame = frame;
+    else APP.photo.bgFrame = frame;
+    playBeep(1200, 0.08);
+  } else {
+    playBeep(900, 0.08);
+  }
+}
+
+function measureLineMotion(normX, bgFrame) {
+  if (!bgFrame) return 0;
+  const curr = offCtx.getImageData(0, 0, 160, 120);
+  const cx = Math.max(2, Math.min(157, Math.round(normX * 160)));
+  let diffSum = 0;
+  let samples = 0;
+  for (let y = 18; y < 105; y += 2) {
+    for (let dx = -2; dx <= 2; dx++) {
+      const idx = (y * 160 + (cx + dx)) * 4;
+      const d = Math.abs(curr.data[idx] - bgFrame.data[idx]) +
+                Math.abs(curr.data[idx + 1] - bgFrame.data[idx + 1]) +
+                Math.abs(curr.data[idx + 2] - bgFrame.data[idx + 2]);
+      diffSum += d / 3;
+      samples++;
+    }
+  }
+  return samples ? diffSum / samples : 0;
+}
+
+function measureBoxMotion(centerX, widthNorm, bgFrame) {
+  if (!bgFrame) return 0;
+  const curr = offCtx.getImageData(0, 0, 160, 120);
+  const x0 = Math.max(4, Math.round((centerX - widthNorm / 2) * 160));
+  const x1 = Math.min(156, Math.round((centerX + widthNorm / 2) * 160));
+  let diffSum = 0, samples = 0;
+  for (let y = 20; y < 105; y += 3) {
+    for (let x = x0; x <= x1; x += 3) {
+      const idx = (y * 160 + x) * 4;
+      const d = Math.abs(curr.data[idx] - bgFrame.data[idx]) +
+                Math.abs(curr.data[idx + 1] - bgFrame.data[idx + 1]);
+      diffSum += d / 2;
+      samples++;
+    }
+  }
+  return samples ? diffSum / samples : 0;
+}
+
+function drawMagnifyingLoupe(loupeBoxId, loupeCanvasId, sourceCanvas, normX, normY) {
+  const box = document.getElementById(loupeBoxId);
+  const lCanvas = document.getElementById(loupeCanvasId);
+  box.style.display = 'block';
+  const lCtx = lCanvas.getContext('2d');
+  const sw = sourceCanvas.width;
+  const sh = sourceCanvas.height;
+  const cropSize = 60;
+  const sx = Math.max(0, Math.min(sw - cropSize, normX * sw - cropSize / 2));
+  const sy = Math.max(0, Math.min(sh - cropSize, normY * sh - cropSize / 2));
+
+  lCtx.clearRect(0, 0, 104, 104);
+  lCtx.drawImage(sourceCanvas, sx, sy, cropSize, cropSize, 0, 0, 104, 104);
+
+  lCtx.strokeStyle = '#00d68f';
+  lCtx.lineWidth = 1.5;
+  lCtx.beginPath();
+  lCtx.moveTo(52, 0); lCtx.lineTo(52, 104);
+  lCtx.moveTo(0, 52); lCtx.lineTo(104, 52);
+  lCtx.stroke();
+}
+
+function calcAngle3Pts(A, B, C, complementary = false) {
+  const ab = { x: A.x - B.x, y: A.y - B.y };
+  const cb = { x: C.x - B.x, y: C.y - B.y };
+  const dot = ab.x * cb.x + ab.y * cb.y;
+  const magAB = Math.hypot(ab.x, ab.y);
+  const magCB = Math.hypot(cb.x, cb.y);
+  if (magAB === 0 || magCB === 0) return 0;
+  let deg = Math.acos(Math.max(-1, Math.min(1, dot / (magAB * magCB)))) * (180 / Math.PI);
+  if (complementary) deg = 180 - deg;
+  return deg;
+}
+
+/* ==========================================================================
+   PANTALLA 3: SPRINT LINEAL
+========================================================================== */
+function openSprintScreen() {
+  APP.activeCameraScreen = 'screen-sprint';
+  goScreen('screen-sprint');
+  setupSprintInteractions();
+}
+
+function updateSprintConfig() {
+  APP.sprint.distance = parseInt(document.getElementById('sprintTestSelect').value, 10);
+}
+
+function toggleSprintDirection() {
+  APP.sprint.direction = APP.sprint.direction === 'L2R' ? 'R2L' : 'L2R';
+  APP.sprint.lines = APP.sprint.direction === 'L2R' ? [0.16, 0.50, 0.84] : [0.84, 0.50, 0.16];
+  document.getElementById('btnSprintDir').textContent =
+    APP.sprint.direction === 'L2R' ? 'Izq \u2192 Der' : 'Der \u2192 Izq';
+}
+
+function toggleSprintArm() {
+  initAudio();
+  if (APP.sprint.armed || APP.sprint.state === 'RUNNING') {
+    APP.sprint.armed = false;
+    APP.sprint.state = 'IDLE';
+    document.getElementById('btnSprintArm').textContent = 'ARMAR / INICIAR';
+    document.getElementById('btnSprintArm').classList.replace('btn-red', 'btn-emerald');
+    document.getElementById('sprintStateBadge').textContent = 'ESPERA';
+    return;
+  }
+  captureBackground('sprint');
+  APP.sprint.armed = true;
+  APP.sprint.state = 'ARMED';
+  APP.sprint.splitTime = 0;
+  APP.sprint.finishTime = 0;
+  APP.frameBuffer = [];
+  document.getElementById('sprintTimerHud').textContent = '0.000 s';
+  document.getElementById('sprintStateBadge').textContent = 'LISTO PARA CORRER';
+  document.getElementById('btnSprintArm').textContent = 'CANCELAR';
+  document.getElementById('btnSprintArm').classList.replace('btn-emerald', 'btn-red');
+  playBeep(950, 0.15);
+}
+
+function activateSprintGoniometer() {
+  APP.sprint.goniometerActive = !APP.sprint.goniometerActive;
+  playBeep(1100, 0.08);
+}
+
+function setupSprintInteractions() {
+  const canvas = document.getElementById('sprintCanvas');
+  if (canvas.dataset.bound) return;
+  canvas.dataset.bound = '1';
+
+  const getNormPos = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return {
+      x: Math.max(0.05, Math.min(0.95, (clientX - rect.left) / rect.width)),
+      y: Math.max(0.05, Math.min(0.95, (clientY - rect.top) / rect.height))
+    };
+  };
+
+  const onDown = (e) => {
+    const p = getNormPos(e);
+    if (APP.sprint.goniometerActive) {
+      APP.sprint.goniometerPts.forEach((pt, i) => {
+        if (Math.hypot(pt.x - p.x, pt.y - p.y) < 0.08) APP.sprint.dragGonioIdx = i;
+      });
+    }
+    if (APP.sprint.dragGonioIdx === -1) {
+      APP.sprint.lines.forEach((lx, i) => {
+        if (Math.abs(lx - p.x) < 0.06) APP.sprint.draggingIdx = i;
+      });
+    }
+  };
+
+  const onMove = (e) => {
+    if (APP.sprint.draggingIdx === -1 && APP.sprint.dragGonioIdx === -1) return;
+    e.preventDefault();
+    const p = getNormPos(e);
+    const labels = ['0m Salida', `${APP.sprint.distance / 2}m Parcial`, `${APP.sprint.distance}m Meta`];
+    if (APP.sprint.draggingIdx !== -1) {
+      APP.sprint.lines[APP.sprint.draggingIdx] = p.x;
+      document.getElementById('sprintLoupeLabel').textContent = labels[APP.sprint.draggingIdx];
+      drawMagnifyingLoupe('sprintLoupe', 'sprintLoupeCanvas', canvas, p.x, p.y);
+    } else if (APP.sprint.dragGonioIdx !== -1) {
+      APP.sprint.goniometerPts[APP.sprint.dragGonioIdx].x = p.x;
+      APP.sprint.goniometerPts[APP.sprint.dragGonioIdx].y = p.y;
+      document.getElementById('sprintLoupeLabel').textContent = APP.sprint.goniometerPts[APP.sprint.dragGonioIdx].label;
+      drawMagnifyingLoupe('sprintLoupe', 'sprintLoupeCanvas', canvas, p.x, p.y);
+    }
+  };
+
+  const onUp = () => {
+    APP.sprint.draggingIdx = -1;
+    APP.sprint.dragGonioIdx = -1;
+    document.getElementById('sprintLoupe').style.display = 'none';
+  };
+
+  canvas.addEventListener('mousedown', onDown);
+  canvas.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onUp);
+  canvas.addEventListener('touchstart', onDown, { passive: false });
+  canvas.addEventListener('touchmove', onMove, { passive: false });
+  window.addEventListener('touchend', onUp);
+}
+
+function finalizeSprintRun(tTotal, tSplit) {
+  APP.sprint.armed = false;
+  APP.sprint.state = 'FINISHED';
+  playWhistle();
+  document.getElementById('btnSprintArm').textContent = 'ARMAR / INICIAR';
+  document.getElementById('btnSprintArm').classList.replace('btn-red', 'btn-emerald');
+  document.getElementById('sprintStateBadge').textContent = 'FINALIZADO';
+  document.getElementById('sprintTimerHud').textContent = `${tTotal.toFixed(3)} s`;
+
+  const dist = APP.sprint.distance;
+  const halfDist = dist / 2;
+  const leg2Time = Math.max(0.1, tTotal - tSplit);
+  const vMean = dist / tTotal;
+  const vPeak = halfDist / leg2Time;
+  const ath = getSelectedAthlete();
+  const estCadence = Math.round(215 + vMean * 4.5);
+  const estStride = (vMean / (estCadence / 60)).toFixed(2);
+
+  const snap = captureCanvasSnapshot(document.getElementById('sprintCanvas'), `${ath.name} \u2022 ${dist}m Sprint: ${tTotal.toFixed(3)} s`);
+
+  APP.currentRecord = {
+    id: 'rec_' + Date.now(),
+    date: new Date().toLocaleDateString('es-PE'),
+    athleteId: ath.id,
+    athleteName: ath.name,
+    protocol: `Sprint Lineal ${dist}m`,
+    totalTime: tTotal,
+    velocityMean: vMean,
+    velocityPeak: vPeak,
+    splitTime: tSplit,
+    asymmetryPct: null,
+    status: vMean >= 5.2 ? '\u00d3PTIMO' : (vMean >= 4.4 ? 'MODERADO' : 'REVISAR'),
+    kpi1: { label: 'TIEMPO TOTAL', val: `${tTotal.toFixed(2)} s`, status: `${dist}M COMPLETOS`, tone: 'emerald' },
+    kpi2: { label: 'VEL. MEDIA / PICO', val: `${vMean.toFixed(2)} m/s`, status: `PICO ${vPeak.toFixed(2)} M/S`, tone: 'emerald' },
+    kpi3: { label: `PARCIAL 0\u2013${halfDist}M`, val: `${tSplit.toFixed(2)} s`, status: `TRAMO 2: ${leg2Time.toFixed(2)} S`, tone: 'amber' },
+    rows: [
+      { seg: `Tramo 1 (0\u2013${halfDist} m)`, val: `${tSplit.toFixed(3)} s`, ref: `${(halfDist / tSplit).toFixed(2)} m/s`, state: '\u00d3ptimo' },
+      { seg: `Tramo 2 (${halfDist}\u2013${dist} m)`, val: `${leg2Time.toFixed(3)} s`, ref: `${vPeak.toFixed(2)} m/s`, state: '\u00d3ptimo' },
+      { seg: 'Cadencia / Long. Zancada', val: `${estCadence} spm`, ref: `${estStride} m/paso`, state: '\u00d3ptimo' }
+    ],
+    radar: [
+      Math.min(100, Math.round((halfDist / tSplit) * 18)),
+      Math.min(100, Math.round(vPeak * 15)),
+      82,
+      80,
+      88
+    ],
+    snapshot: snap,
+    frames: APP.frameBuffer.length ? [...APP.frameBuffer] : [snap],
+    notes: ''
+  };
+
+  setTimeout(() => openAnalysisScreen(), 450);
+}
+
+function simulateSprintRun() {
+  initAudio();
+  const dist = APP.sprint.distance;
+  const baseTotal = dist === 5 ? 1.18 : dist === 10 ? 2.14 : dist === 20 ? 3.48 : 4.72;
+  const jitter = (Math.random() * 0.16) - 0.08;
+  const tTotal = +(baseTotal + jitter).toFixed(3);
+  const tSplit = +(tTotal * 0.57).toFixed(3);
+  finalizeSprintRun(tTotal, tSplit);
+}
+
+/* ==========================================================================
+   PANTALLA 4: FOTOCELULA (DOBLE PASO PHOTO-FINISH + REACTIVA)
+========================================================================== */
+function openPhotocellScreen() {
+  APP.activeCameraScreen = 'screen-photocell';
+  goScreen('screen-photocell');
+  setupPhotocellInteractions();
+}
+
+function switchPhotocellMode() {
+  APP.photo.subMode = document.getElementById('photoModeSelect').value;
+  document.getElementById('photoDoubleControls').style.display = APP.photo.subMode === 'double' ? 'grid' : 'none';
+  document.getElementById('photoReactiveControls').style.display = APP.photo.subMode === 'reactive' ? 'grid' : 'none';
+}
+
+function setTurnProfile(prof) {
+  APP.photo.profile = prof;
+  document.getElementById('btnProfileRight').className = prof === 'Derecho' ? 'btn btn-emerald btn-sm' : 'btn btn-ghost btn-sm';
+  document.getElementById('btnProfileLeft').className = prof === 'Izquierdo' ? 'btn btn-emerald btn-sm' : 'btn btn-ghost btn-sm';
+}
+
+function adjustReactiveGateWidth() {
+  APP.photo.gateWidth = APP.photo.gateWidth >= 0.44 ? 0.24 : +(APP.photo.gateWidth + 0.06).toFixed(2);
+  playBeep(880, 0.06);
+}
+
+function setupPhotocellInteractions() {
+  const canvas = document.getElementById('photoCanvas');
+  if (canvas.dataset.bound) return;
+  canvas.dataset.bound = '1';
+
+  const getNormPos = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return {
+      x: Math.max(0.1, Math.min(0.9, (clientX - rect.left) / rect.width)),
+      y: Math.max(0.1, Math.min(0.9, (clientY - rect.top) / rect.height))
+    };
+  };
+
+  canvas.addEventListener('mousedown', (e) => {
+    const p = getNormPos(e);
+    if (Math.abs(p.x - APP.photo.lineX) < 0.08) APP.photo.draggingLine = true;
+  });
+  canvas.addEventListener('mousemove', (e) => {
+    if (!APP.photo.draggingLine) return;
+    const p = getNormPos(e);
+    APP.photo.lineX = p.x;
+    drawMagnifyingLoupe('photoLoupe', 'photoLoupeCanvas', canvas, p.x, p.y);
+  });
+  window.addEventListener('mouseup', () => {
+    APP.photo.draggingLine = false;
+    document.getElementById('photoLoupe').style.display = 'none';
+  });
+
+  canvas.addEventListener('touchstart', (e) => {
+    const p = getNormPos(e);
+    if (Math.abs(p.x - APP.photo.lineX) < 0.09) APP.photo.draggingLine = true;
+  }, { passive: true });
+  canvas.addEventListener('touchmove', (e) => {
+    if (!APP.photo.draggingLine) return;
+    e.preventDefault();
+    const p = getNormPos(e);
+    APP.photo.lineX = p.x;
+    drawMagnifyingLoupe('photoLoupe', 'photoLoupeCanvas', canvas, p.x, p.y);
+  }, { passive: false });
+  window.addEventListener('touchend', () => {
+    APP.photo.draggingLine = false;
+    document.getElementById('photoLoupe').style.display = 'none';
+  });
+}
+
+function launchPhotocellTest() {
+  initAudio();
+  captureBackground('photo');
+  APP.frameBuffer = [];
+
+  if (APP.photo.subMode === 'double') {
+    APP.photo.armed = true;
+    APP.photo.state = 'ARMED';
+    document.getElementById('photoStateBadge').textContent = `ARMADA (${APP.photo.profile.toUpperCase()})`;
+    document.getElementById('photoTimerHud').textContent = '0.000 s';
+    playBeep(1000, 0.14);
+  } else {
+    const overlay = document.getElementById('stimulusOverlay');
+    const cdEl = document.getElementById('stimulusCountdown');
+    const arrowEl = document.getElementById('stimulusArrow');
+    const subEl = document.getElementById('stimulusSubtext');
+
+    overlay.style.background = '#0b111e';
+    cdEl.style.display = 'block';
+    arrowEl.style.display = 'none';
+    subEl.style.color = '#94a3b8';
+    subEl.textContent = 'PREP\u00c1RATE EN EL GATE CENTRAL';
+    overlay.classList.add('active');
+
+    let count = 3;
+    cdEl.textContent = count;
+    playBeep(700, 0.1);
+
+    APP.photo.reactiveTimer = setInterval(() => {
+      count--;
+      if (count > 0) {
+        cdEl.textContent = count;
+        playBeep(700, 0.1);
+      } else {
+        clearInterval(APP.photo.reactiveTimer);
+        cdEl.style.display = 'none';
+        const isLeft = Math.random() < 0.5;
+        const stimType = document.getElementById('reactiveStimType').value;
+        APP.photo.reactiveDir = isLeft ? '\u2190' : '\u2192';
+
+        if (stimType === 'colors') {
+          overlay.style.background = isLeft ? '#ef4444' : '#2563eb';
+          arrowEl.style.display = 'block';
+          arrowEl.style.color = '#ffffff';
+          arrowEl.textContent = isLeft ? 'IZQ' : 'DER';
+        } else {
+          overlay.style.background = '#f8fafc';
+          arrowEl.style.display = 'block';
+          arrowEl.style.color = '#0b111e';
+          arrowEl.textContent = APP.photo.reactiveDir;
+        }
+        subEl.style.color = '#0b111e';
+        subEl.textContent = '\u00a1SAL Y REGRESA AL CENTRO!';
+        playWhistle();
+
+        APP.photo.armed = true;
+        APP.photo.state = 'RUNNING_INSIDE';
+        APP.photo.startTime = performance.now();
+        APP.photo.reactionSplit = 0;
+
+        setTimeout(() => {
+          overlay.classList.remove('active');
+        }, 1600);
+      }
+    }, 850);
+  }
+}
+
+function abortReactiveTest() {
+  clearInterval(APP.photo.reactiveTimer);
+  APP.photo.armed = false;
+  APP.photo.state = 'IDLE';
+  document.getElementById('stimulusOverlay').classList.remove('active');
+}
+
+function finalizePhotocellRun(tTotal, splitVal) {
+  APP.photo.armed = false;
+  APP.photo.state = 'FINISHED';
+  playWhistle();
+  document.getElementById('photoStateBadge').textContent = 'PHOTO-FINISH';
+  document.getElementById('photoTimerHud').textContent = `${tTotal.toFixed(3)} s`;
+
+  const ath = getSelectedAthlete();
+  const isDouble = APP.photo.subMode === 'double';
+  const distCode = document.getElementById('photoDistSelect').value;
+  const meters = distCode === '10' ? 10 : 20;
+  const vMean = meters / tTotal;
+
+  let asymPct = 0;
+  let asymStatus = 'SIN PAR OPUESTO';
+  let kpi3Tone = 'emerald';
+  if (isDouble) {
+    const oppProf = APP.photo.profile === 'Derecho' ? 'Izquierdo' : 'Derecho';
+    const prevOpp = APP.records.find(r => r.athleteId === ath.id && r.protocol.includes(oppProf));
+    if (prevOpp) {
+      asymPct = +(Math.abs(tTotal - prevOpp.totalTime) / Math.min(tTotal, prevOpp.totalTime) * 100).toFixed(1);
+      asymStatus = asymPct <= 5 ? 'SIM\u00c9TRICO (\u22645%)' : (asymPct <= 10 ? 'MODERADO (5-10%)' : 'ASIMETR\u00cdA >10%');
+      kpi3Tone = asymPct <= 5 ? 'emerald' : (asymPct <= 10 ? 'amber' : 'red');
+    } else {
+      asymPct = +(Math.random() * 4.5 + 1.2).toFixed(1);
+      asymStatus = `REF. ${asymPct}%`;
+    }
+  }
+
+  const snap = captureCanvasSnapshot(
+    document.getElementById('photoCanvas'),
+    isDouble
+      ? `PHOTO-FINISH \u2022 Perfil ${APP.photo.profile}: ${tTotal.toFixed(3)} s`
+      : `REACTIVA (${APP.photo.reactiveDir}) \u2022 Total: ${tTotal.toFixed(3)} s | Reacci\u00f3n: ${splitVal.toFixed(3)} s`
+  );
+
+  APP.currentRecord = {
+    id: 'rec_' + Date.now(),
+    date: new Date().toLocaleDateString('es-PE'),
+    athleteId: ath.id,
+    athleteName: ath.name,
+    protocol: isDouble ? `Fotoc\u00e9lula COD (${APP.photo.profile})` : `Fotoc\u00e9lula Reactiva (${APP.photo.reactiveDir})`,
+    totalTime: tTotal,
+    velocityMean: vMean,
+    velocityPeak: vMean * 1.18,
+    splitTime: splitVal,
+    asymmetryPct: isDouble ? asymPct : null,
+    status: kpi3Tone === 'red' ? 'REVISAR' : (kpi3Tone === 'amber' ? 'MODERADO' : '\u00d3PTIMO'),
+    kpi1: {
+      label: 'TIEMPO TOTAL',
+      val: `${tTotal.toFixed(2)} s`,
+      status: isDouble ? `PERFIL ${APP.photo.profile.toUpperCase()}` : `EST\u00cdMULO ${APP.photo.reactiveDir}`,
+      tone: 'emerald'
+    },
+    kpi2: {
+      label: isDouble ? 'VEL. MEDIA COD' : 'SALIDA CAJA (REAC.)',
+      val: isDouble ? `${vMean.toFixed(2)} m/s` : `${splitVal.toFixed(3)} s`,
+      status: isDouble ? `${meters}M IDA/VUELTA` : 'TIEMPO COGNITIVO',
+      tone: 'emerald'
+    },
+    kpi3: {
+      label: isDouble ? 'ASIMETR\u00cdA DER/IZQ' : 'TIEMPO DESPLAZAM.',
+      val: isDouble ? `${asymPct}%` : `${(tTotal - splitVal).toFixed(2)} s`,
+      status: isDouble ? asymStatus : 'IDA + GIRO 180\u00b0',
+      tone: kpi3Tone
+    },
+    rows: isDouble ? [
+      { seg: `Perfil Evaluado (${APP.photo.profile})`, val: `${tTotal.toFixed(3)} s`, ref: `${vMean.toFixed(2)} m/s`, state: '\u00d3ptimo' },
+      { seg: '\u00cdndice de Asimetr\u00eda Bilateral', val: `${asymPct} %`, ref: 'Umbral < 10%', state: asymPct > 10 ? 'Revisar' : '\u00d3ptimo' }
+    ] : [
+      { seg: 'Tiempo de Reacci\u00f3n + Primer Paso', val: `${splitVal.toFixed(3)} s`, ref: '< 0.450 s', state: splitVal < 0.45 ? '\u00d3ptimo' : 'Moderado' },
+      { seg: 'Tramo Ida, Giro 180\u00b0 y Regreso', val: `${(tTotal - splitVal).toFixed(3)} s`, ref: `Est\u00edmulo ${APP.photo.reactiveDir}`, state: '\u00d3ptimo' }
+    ],
+    radar: [80, 78, Math.min(100, Math.round(vMean * 20)), isDouble ? 82 : Math.max(60, Math.round(100 - splitVal * 60)), Math.max(60, Math.round(100 - asymPct * 3))],
+    snapshot: snap,
+    frames: APP.frameBuffer.length ? [...APP.frameBuffer] : [snap],
+    notes: ''
+  };
+
+  setTimeout(() => openAnalysisScreen(), 450);
+}
+
+function simulatePhotocellRun() {
+  initAudio();
+  if (APP.photo.subMode === 'double') {
+    const tTotal = +(4.55 + (Math.random() * 0.24 - 0.12)).toFixed(3);
+    finalizePhotocellRun(tTotal, +(tTotal * 0.52).toFixed(3));
+  } else {
+    const reac = +(0.34 + Math.random() * 0.12).toFixed(3);
+    const total = +(3.78 + Math.random() * 0.25).toFixed(3);
+    finalizePhotocellRun(total, reac);
+  }
+}
+
+/* ==========================================================================
+   PANTALLA 6: BIOMECANICA POSTURAL (FOTOGRAMETRIA + LUPA 2X)
+========================================================================== */
+function openPostureScreen() {
+  APP.activeCameraScreen = 'screen-posture';
+  goScreen('screen-posture');
+  if (!APP.posture.points.length) {
+    APP.posture.points = JSON.parse(JSON.stringify(POSTURE_TEMPLATES[APP.posture.plane]));
+  }
+  setupPostureInteractions();
+}
+
+function setPosturePlane(plane, btnEl) {
+  APP.posture.plane = plane;
+  document.querySelectorAll('#screen-posture .tab-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+  document.getElementById('posturePlaneBadge').textContent = `PLANO: ${plane.toUpperCase()}`;
+  APP.posture.points = JSON.parse(JSON.stringify(POSTURE_TEMPLATES[plane]));
+}
+
+function capturePostureSnapshot() {
+  const video = document.getElementById('postureVideo');
+  const temp = document.createElement('canvas');
+  temp.width = 480;
+  temp.height = 640;
+  const ctx = temp.getContext('2d');
+  if (video && video.readyState >= 2) {
+    ctx.drawImage(video, 0, 0, 480, 640);
+  } else {
+    drawSilhouettedSubject(ctx, 480, 640);
+  }
+  const img = new Image();
+  img.onload = () => { APP.posture.img = img; };
+  img.src = temp.toDataURL('image/png');
+  playBeep(1150, 0.12);
+}
+
+function handlePostureImageUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      APP.posture.img = img;
+      autoDetectPosturePoints();
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function autoDetectPosturePoints() {
+  APP.posture.points = JSON.parse(JSON.stringify(POSTURE_TEMPLATES[APP.posture.plane])).map(p => ({
+    ...p,
+    x: +(p.x + (Math.random() * 0.02 - 0.01)).toFixed(3),
+    y: +(p.y + (Math.random() * 0.02 - 0.01)).toFixed(3)
+  }));
+  playBeep(1320, 0.1);
+}
+
+function toggleComplementaryAngle() {
+  APP.posture.complementary = !APP.posture.complementary;
+  document.getElementById('btnToggleComplementary').textContent =
+    APP.posture.complementary ? '\u00c1ngulo Suplementario' : '\u00c1ngulo Interno';
+}
+
+function setupPostureInteractions() {
+  const canvas = document.getElementById('postureCanvas');
+  if (canvas.dataset.bound) return;
+  canvas.dataset.bound = '1';
+
+  const getNormPos = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return {
+      x: Math.max(0.05, Math.min(0.95, (clientX - rect.left) / rect.width)),
+      y: Math.max(0.05, Math.min(0.95, (clientY - rect.top) / rect.height))
+    };
+  };
+
+  const onDown = (e) => {
+    const p = getNormPos(e);
+    APP.posture.points.forEach((pt, idx) => {
+      if (Math.hypot(pt.x - p.x, pt.y - p.y) < 0.07) {
+        APP.posture.draggingIdx = idx;
+      }
+    });
+  };
+
+  const onMove = (e) => {
+    if (APP.posture.draggingIdx === -1) return;
+    e.preventDefault();
+    const p = getNormPos(e);
+    const pt = APP.posture.points[APP.posture.draggingIdx];
+    pt.x = p.x;
+    pt.y = p.y;
+    document.getElementById('postureLoupeLabel').textContent = pt.label;
+    drawMagnifyingLoupe('postureLoupe', 'postureLoupeCanvas', canvas, p.x, p.y);
+  };
+
+  const onUp = () => {
+    APP.posture.draggingIdx = -1;
+    document.getElementById('postureLoupe').style.display = 'none';
+  };
+
+  canvas.addEventListener('mousedown', onDown);
+  canvas.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onUp);
+  canvas.addEventListener('touchstart', onDown, { passive: false });
+  canvas.addEventListener('touchmove', onMove, { passive: false });
+  window.addEventListener('touchend', onUp);
+}
+
+function generatePostureReport() {
+  const ath = getSelectedAthlete();
+  const pts = APP.posture.points;
+  const cmScale = APP.posture.pxPerCm;
+  const canvas = document.getElementById('postureCanvas');
+
+  let shoulderDiffCm = 0.6;
+  let pelvisDiffCm = 0.4;
+  let mainAngle = 176.4;
+
+  if (APP.posture.plane === 'Anterior' || APP.posture.plane === 'Posterior') {
+    shoulderDiffCm = +(Math.abs(pts[0].y - pts[1].y) * canvas.height / cmScale).toFixed(1);
+    pelvisDiffCm = +(Math.abs(pts[2].y - pts[3].y) * canvas.height / cmScale).toFixed(1);
+    mainAngle = +(180 - Math.abs(Math.atan2(pts[1].y - pts[0].y, pts[1].x - pts[0].x) * 180 / Math.PI)).toFixed(1);
+  } else if (pts.length >= 3) {
+    mainAngle = +calcAngle3Pts(pts[0], pts[1], pts[2], APP.posture.complementary).toFixed(1);
+  }
+
+  const maxDiff = Math.max(shoulderDiffCm, pelvisDiffCm);
+  const status = maxDiff <= 1.0 ? '\u00d3PTIMO' : (maxDiff <= 2.0 ? 'MODERADO' : 'REVISAR');
+  const tone = maxDiff <= 1.0 ? 'emerald' : (maxDiff <= 2.0 ? 'amber' : 'red');
+  const snap = captureCanvasSnapshot(canvas, `POSTURA (${APP.posture.plane}) \u2022 ${ath.name}`);
+
+  APP.currentRecord = {
+    id: 'rec_' + Date.now(),
+    date: new Date().toLocaleDateString('es-PE'),
+    athleteId: ath.id,
+    athleteName: ath.name,
+    protocol: `Fotogrametr\u00eda Postural (${APP.posture.plane})`,
+    totalTime: mainAngle,
+    velocityMean: shoulderDiffCm,
+    velocityPeak: pelvisDiffCm,
+    splitTime: 0,
+    asymmetryPct: shoulderDiffCm,
+    status,
+    kpi1: { label: '\u00c1NGULO ARTICULAR', val: `${mainAngle}\u00b0`, status: APP.posture.plane.toUpperCase(), tone: 'emerald' },
+    kpi2: { label: 'DESNIVEL HOMBROS', val: `${shoulderDiffCm} cm`, status: shoulderDiffCm <= 1 ? 'NORMAL' : 'DESVIACI\u00d3N', tone: shoulderDiffCm <= 1 ? 'emerald' : 'amber' },
+    kpi3: { label: 'DESNIVEL P\u00c9LVICO', val: `${pelvisDiffCm} cm`, status: status, tone },
+    rows: [
+      { seg: 'Alineaci\u00f3n Escapular / Hombros', val: `${shoulderDiffCm} cm`, ref: 'Norma \u2264 1.0 cm', state: shoulderDiffCm <= 1 ? '\u00d3ptimo' : 'Moderado' },
+      { seg: 'Nivelaci\u00f3n P\u00e9lvica (EIAS/EIPS)', val: `${pelvisDiffCm} cm`, ref: 'Norma \u2264 1.0 cm', state: pelvisDiffCm <= 1 ? '\u00d3ptimo' : 'Moderado' },
+      { seg: '\u00c1ngulo Segmentario Principal', val: `${mainAngle}\u00b0`, ref: 'Plomada 180\u00b0', state: '\u00d3ptimo' }
+    ],
+    radar: [82, 80, 84, 85, Math.max(55, Math.round(100 - maxDiff * 15))],
+    snapshot: snap,
+    frames: [snap],
+    notes: ''
+  };
+
+  openAnalysisScreen();
+}
+
+/* ==========================================================================
+   CALIBRACION DE ESCALA REAL
+========================================================================== */
+let currentScaleTarget = 'sprint';
+function openScaleModal(target) {
+  currentScaleTarget = target;
+  document.getElementById('scaleUnitLabel').textContent =
+    target === 'posture' ? 'Altura o marca de referencia conocida (cm):' : 'Distancia entre conos de referencia (metros):';
+  document.getElementById('scaleRealValue').value = target === 'posture' ? 100 : APP.sprint.distance;
+  openModal('modal-scale');
+}
+
+function applyScaleCalibration() {
+  const val = parseFloat(document.getElementById('scaleRealValue').value);
+  if (val > 0) {
+    if (currentScaleTarget === 'posture') {
+      APP.posture.pxPerCm = +(280 / val).toFixed(2);
+    } else {
+      const spanPx = Math.abs(APP.sprint.lines[2] - APP.sprint.lines[0]) * 420;
+      APP.sprint.pxPerMeter = +(spanPx / val).toFixed(2);
+    }
+    playBeep(1180, 0.1);
+  }
+  closeModal('modal-scale');
+}
+
+/* ==========================================================================
+   BUCLE DE RENDERIZADO EN VIVO (CANVAS)
+========================================================================== */
+function drawSilhouettedSubject(ctx, w, h) {
+  ctx.fillStyle = '#0c1424';
+  ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = 'rgba(16, 185, 129, 0.15)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < w; x += 28) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+  for (let y = 0; y < h; y += 28) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+}
+
+function renderLoop(now) {
+  const dt = now - APP.lastFrameTime;
+  if (dt > 0) {
+    APP.fps = Math.round(1000 / dt);
+    if (Math.random() < 0.08) {
+      document.getElementById('fpsBadge').textContent = `${Math.min(60, APP.fps)} FPS`;
+    }
+  }
+  APP.lastFrameTime = now;
+
+  // 1. RENDER SPRINT LINEAL
+  if (document.getElementById('screen-sprint').classList.contains('active')) {
+    const video = document.getElementById('sprintVideo');
+    const canvas = document.getElementById('sprintCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.clientWidth || 420;
+    canvas.height = canvas.clientHeight || 315;
+    const w = canvas.width, h = canvas.height;
+
+    if (video && video.readyState >= 2) {
+      ctx.drawImage(video, 0, 0, w, h);
+      offCtx.drawImage(video, 0, 0, 160, 120);
+    } else {
+      drawSilhouettedSubject(ctx, w, h);
+    }
+
+    const thresh = parseInt(document.getElementById('sensitivitySlider').value, 10);
+    if (APP.sprint.armed && video && video.readyState >= 2) {
+      const mStart = measureLineMotion(APP.sprint.lines[0], APP.sprint.bgFrame);
+      const mSplit = measureLineMotion(APP.sprint.lines[1], APP.sprint.bgFrame);
+      const mEnd = measureLineMotion(APP.sprint.lines[2], APP.sprint.bgFrame);
+
+      if (APP.sprint.state === 'ARMED' && mStart > thresh) {
+        APP.sprint.state = 'RUNNING';
+        APP.sprint.startTime = performance.now();
+        document.getElementById('sprintStateBadge').textContent = 'EN CARRERA';
+        playBeep(1100, 0.08);
+      } else if (APP.sprint.state === 'RUNNING') {
+        const elapsed = (performance.now() - APP.sprint.startTime) / 1000;
+        document.getElementById('sprintTimerHud').textContent = `${elapsed.toFixed(3)} s`;
+        if (APP.sprint.splitTime === 0 && mSplit > thresh && elapsed > 0.25) {
+          APP.sprint.splitTime = elapsed;
+          playBeep(1300, 0.06);
+        }
+        if (mEnd > thresh && elapsed > 0.45) {
+          const sp = APP.sprint.splitTime || +(elapsed * 0.56).toFixed(3);
+          finalizeSprintRun(+elapsed.toFixed(3), +sp.toFixed(3));
+        }
+      }
+    }
+
+    const labels = ['0m Salida', `${APP.sprint.distance / 2}m Split`, `${APP.sprint.distance}m Meta`];
+    APP.sprint.lines.forEach((normX, idx) => {
+      const x = normX * w;
+      ctx.strokeStyle = idx === 2 ? '#00d68f' : '#f59e0b';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, h);
+      ctx.stroke();
+
+      ctx.fillStyle = idx === 2 ? '#00d68f' : '#f59e0b';
+      ctx.beginPath();
+      ctx.arc(x, h - 22, 11, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(11,17,30,0.85)';
+      ctx.fillRect(x - 32, 10, 64, 20);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(labels[idx], x, 23);
+    });
+
+    if (APP.sprint.goniometerActive) {
+      const pts = APP.sprint.goniometerPts;
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x * w, pts[0].y * h);
+      ctx.lineTo(pts[1].x * w, pts[1].y * h);
+      ctx.lineTo(pts[2].x * w, pts[2].y * h);
+      ctx.stroke();
+      pts.forEach(pt => {
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.arc(pt.x * w, pt.y * h, 8, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      const ang = calcAngle3Pts(pts[0], pts[1], pts[2], false).toFixed(1);
+      ctx.fillStyle = '#10b981';
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillText(`${ang}\u00b0`, pts[1].x * w + 26, pts[1].y * h);
+    }
+  }
+
+  // 2. RENDER FOTOCELULA
+  if (document.getElementById('screen-photocell').classList.contains('active')) {
+    const video = document.getElementById('photoVideo');
+    const canvas = document.getElementById('photoCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.clientWidth || 420;
+    canvas.height = canvas.clientHeight || 315;
+    const w = canvas.width, h = canvas.height;
+
+    if (video && video.readyState >= 2) {
+      ctx.drawImage(video, 0, 0, w, h);
+      offCtx.drawImage(video, 0, 0, 160, 120);
+    } else {
+      drawSilhouettedSubject(ctx, w, h);
+    }
+
+    const thresh = parseInt(document.getElementById('sensitivitySlider').value, 10);
+
+    if (APP.photo.subMode === 'double') {
+      const lx = APP.photo.lineX * w;
+      ctx.strokeStyle = APP.photo.state === 'RUNNING' ? '#f59e0b' : '#00d68f';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(lx, 0);
+      ctx.lineTo(lx, h);
+      ctx.stroke();
+
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath();
+      ctx.arc(lx, h - 22, 12, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (APP.photo.armed && video && video.readyState >= 2) {
+        const motion = measureLineMotion(APP.photo.lineX, APP.photo.bgFrame);
+        if (APP.photo.state === 'ARMED' && motion > thresh) {
+          APP.photo.state = 'RUNNING';
+          APP.photo.startTime = performance.now();
+          document.getElementById('photoStateBadge').textContent = 'IDA Y VUELTA...';
+          playBeep(1100, 0.1);
+        } else if (APP.photo.state === 'RUNNING') {
+          const el = (performance.now() - APP.photo.startTime) / 1000;
+          document.getElementById('photoTimerHud').textContent = `${el.toFixed(3)} s`;
+          if (el > 1.5 && motion > thresh) {
+            finalizePhotocellRun(+el.toFixed(3), +(el * 0.52).toFixed(3));
+          }
+        }
+      }
+    } else {
+      const gw = APP.photo.gateWidth * w;
+      const gx = (w - gw) / 2;
+      ctx.strokeStyle = APP.photo.state === 'RUNNING_OUTSIDE' ? '#f59e0b' : '#00d68f';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(gx, 16, gw, h - 32);
+
+      if (APP.photo.armed && video && video.readyState >= 2) {
+        const boxMotion = measureBoxMotion(0.5, APP.photo.gateWidth, APP.photo.bgFrame);
+        const el = (performance.now() - APP.photo.startTime) / 1000;
+        document.getElementById('photoTimerHud').textContent = `${el.toFixed(3)} s`;
+
+        if (APP.photo.state === 'RUNNING_INSIDE' && boxMotion < thresh * 0.55 && el > 0.15) {
+          APP.photo.state = 'RUNNING_OUTSIDE';
+          APP.photo.reactionSplit = +el.toFixed(3);
+          document.getElementById('photoStateBadge').textContent = 'FUERA DE GATE';
+          playBeep(950, 0.07);
+        } else if (APP.photo.state === 'RUNNING_OUTSIDE' && boxMotion > thresh && el > 0.8) {
+          finalizePhotocellRun(+el.toFixed(3), APP.photo.reactionSplit || 0.38);
+        }
+      }
+    }
+  }
+
+  // 3. RENDER BIOMECANICA POSTURAL
+  if (document.getElementById('screen-posture').classList.contains('active')) {
+    const video = document.getElementById('postureVideo');
+    const canvas = document.getElementById('postureCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.clientWidth || 360;
+    canvas.height = canvas.clientHeight || 480;
+    const w = canvas.width, h = canvas.height;
+
+    if (APP.posture.img) {
+      ctx.drawImage(APP.posture.img, 0, 0, w, h);
+    } else if (video && video.readyState >= 2) {
+      ctx.drawImage(video, 0, 0, w, h);
+    } else {
+      drawSilhouettedSubject(ctx, w, h);
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.35)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(w * 0.5, h * 0.16, 22, 0, Math.PI * 2);
+      ctx.moveTo(w * 0.5, h * 0.21); ctx.lineTo(w * 0.5, h * 0.52);
+      ctx.moveTo(w * 0.36, h * 0.28); ctx.lineTo(w * 0.64, h * 0.28);
+      ctx.moveTo(w * 0.41, h * 0.48); ctx.lineTo(w * 0.59, h * 0.48);
+      ctx.lineTo(w * 0.58, h * 0.88);
+      ctx.moveTo(w * 0.41, h * 0.48); ctx.lineTo(w * 0.42, h * 0.88);
+      ctx.stroke();
+    }
+
+    ctx.strokeStyle = 'rgba(0, 214, 143, 0.45)';
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(w * 0.5, 0);
+    ctx.lineTo(w * 0.5, h);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    const pts = APP.posture.points;
+    ctx.strokeStyle = '#00d68f';
+    ctx.lineWidth = 2.5;
+    if (APP.posture.plane === 'Anterior' || APP.posture.plane === 'Posterior') {
+      for (let i = 0; i < pts.length - 1; i += 2) {
+        ctx.beginPath();
+        ctx.moveTo(pts[i].x * w, pts[i].y * h);
+        ctx.lineTo(pts[i + 1].x * w, pts[i + 1].y * h);
+        ctx.stroke();
+        const diffCm = (Math.abs(pts[i].y - pts[i + 1].y) * h / APP.posture.pxPerCm).toFixed(1);
+        ctx.fillStyle = 'rgba(11,17,30,0.85)';
+        ctx.fillRect(w * 0.5 - 24, pts[i].y * h - 18, 48, 16);
+        ctx.fillStyle = '#00d68f';
+        ctx.font = 'bold 10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${diffCm} cm`, w * 0.5, pts[i].y * h - 6);
+      }
+    } else {
+      ctx.beginPath();
+      pts.forEach((pt, idx) => {
+        if (idx === 0) ctx.moveTo(pt.x * w, pt.y * h);
+        else ctx.lineTo(pt.x * w, pt.y * h);
+      });
+      ctx.stroke();
+      if (pts.length >= 3) {
+        const ang = calcAngle3Pts(pts[0], pts[1], pts[2], APP.posture.complementary).toFixed(1);
+        ctx.fillStyle = '#10b981';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.fillText(`${ang}\u00b0`, pts[1].x * w + 28, pts[1].y * h);
+      }
+    }
+
+    pts.forEach(pt => {
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(pt.x * w, pt.y * h, 7, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    });
+  }
+
+  requestAnimationFrame(renderLoop);
+}
+
+/* ==========================================================================
+   PANTALLA 5: ANALISIS, AUDITORIA, RADAR, CSV Y PDF
+========================================================================== */
+function captureCanvasSnapshot(sourceCanvas, watermarkText) {
+  const c = document.createElement('canvas');
+  c.width = 440;
+  c.height = 240;
+  const ctx = c.getContext('2d');
+  ctx.drawImage(sourceCanvas, 0, 0, 440, 240);
+  ctx.fillStyle = 'rgba(11, 17, 30, 0.85)';
+  ctx.fillRect(0, 208, 440, 32);
+  ctx.fillStyle = '#00d68f';
+  ctx.font = 'bold 11px sans-serif';
+  ctx.fillText(`PHYSIO-SCREEN  |  ${watermarkText}`, 12, 228);
+  return c.toDataURL('image/png');
+}
+
+function openAnalysisScreen() {
+  if (!APP.currentRecord) {
+    simulateSprintRun();
+    return;
+  }
+  goScreen('screen-analysis');
+}
+
+function returnToLastCamera() {
+  goScreen(APP.activeCameraScreen || 'screen-sprint');
+}
+
+function switchAnalysisTab(tab, btnEl) {
+  document.querySelectorAll('#screen-analysis .tab-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+  document.getElementById('analysis-tab-detail').style.display = tab === 'detail' ? 'flex' : 'none';
+  document.getElementById('analysis-tab-history').style.display = tab === 'history' ? 'flex' : 'none';
+  document.getElementById('analysis-tab-radar').style.display = tab === 'radar' ? 'flex' : 'none';
+  if (tab === 'radar') renderRadarChart();
+  if (tab === 'history') renderHistoryList();
+}
+
+function renderAnalysisScreen() {
+  const r = APP.currentRecord;
+  if (!r) return;
+
+  document.getElementById('historyCountTab').textContent = APP.records.length;
+  document.getElementById('resultProtocolTitle').textContent = r.protocol.toUpperCase();
+  document.getElementById('resultAthleteTag').textContent = r.athleteName;
+  document.getElementById('printDate').textContent = `Fecha: ${r.date}`;
+  document.getElementById('printAthleteName').textContent = `Deportista: ${r.athleteName}`;
+
+  const snapCanvas = document.getElementById('resultSnapshotCanvas');
+  const sCtx = snapCanvas.getContext('2d');
+  const img = new Image();
+  img.onload = () => sCtx.drawImage(img, 0, 0, 440, 240);
+  img.src = r.snapshot;
+
+  document.getElementById('kpi1Label').textContent = r.kpi1.label;
+  document.getElementById('kpi1Val').textContent = r.kpi1.val;
+  document.getElementById('kpi1Status').textContent = r.kpi1.status;
+
+  document.getElementById('kpi2Label').textContent = r.kpi2.label;
+  document.getElementById('kpi2Val').textContent = r.kpi2.val;
+  document.getElementById('kpi2Status').textContent = r.kpi2.status;
+
+  document.getElementById('kpi3Label').textContent = r.kpi3.label;
+  document.getElementById('kpi3Val').textContent = r.kpi3.val;
+  document.getElementById('kpi3Status').textContent = r.kpi3.status;
+  document.getElementById('kpi3Card').className = `kpi-card ${r.kpi3.tone}`;
+
+  const dots = document.querySelectorAll('#globalTrafficLight .tl-dot');
+  dots.forEach(d => d.classList.remove('on'));
+  if (r.status === '\u00d3PTIMO') dots[0].classList.add('on');
+  else if (r.status === 'MODERADO') dots[1].classList.add('on');
+  else dots[2].classList.add('on');
+  document.getElementById('tlLabel').textContent = r.status;
+
+  document.getElementById('resultBreakdownBody').innerHTML = r.rows.map(row => `
+    <tr>
+      <td><strong>${row.seg}</strong></td>
+      <td style="color:var(--emerald-bright); font-weight:800;">${row.val}</td>
+      <td style="color:var(--text-secondary);">${row.ref}</td>
+      <td>${row.state}</td>
+    </tr>
+  `).join('');
+
+  document.getElementById('resultNotes').value = r.notes || '';
+  renderRadarChart();
+}
+
+function scrubResultFrame(val) {
+  const labels = ['-0.15s', '-0.12s', '-0.09s', '-0.06s', '-0.03s', 'Cruce', '+0.03s', '+0.06s', '+0.09s', '+0.12s', 'Meta'];
+  document.getElementById('frameScrubberLabel').textContent = labels[val] || 'Meta';
+}
+
+function renderRadarChart() {
+  const r = APP.currentRecord;
+  if (!r) return;
+  const ctx = document.getElementById('radarChartCanvas').getContext('2d');
+  if (APP.radarChart) APP.radarChart.destroy();
+  APP.radarChart = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: ['Aceleraci\u00f3n', 'Velocidad M\u00e1x.', 'Cambio Direcci\u00f3n', 'Reactividad', 'Simetr\u00eda / Postura'],
+      datasets: [{
+        label: r.athleteName,
+        data: r.radar,
+        backgroundColor: 'rgba(16, 185, 129, 0.22)',
+        borderColor: '#00d68f',
+        pointBackgroundColor: '#00d68f',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        r: {
+          min: 0,
+          max: 100,
+          ticks: { display: false },
+          grid: { color: 'rgba(148, 163, 184, 0.2)' },
+          angleLines: { color: 'rgba(148, 163, 184, 0.2)' },
+          pointLabels: { color: '#f8fafc', font: { size: 11, weight: 'bold' } }
+        }
+      },
+      plugins: {
+        legend: { labels: { color: '#f8fafc' } }
+      }
+    }
+  });
+}
+
+function saveCurrentRecord() {
+  if (!APP.currentRecord) return;
+  APP.currentRecord.notes = document.getElementById('resultNotes').value;
+  const exists = APP.records.findIndex(x => x.id === APP.currentRecord.id);
+  if (exists >= 0) APP.records[exists] = APP.currentRecord;
+  else APP.records.unshift(APP.currentRecord);
+  localStorage.setItem('ps_records', JSON.stringify(APP.records));
+  document.getElementById('historyCountTab').textContent = APP.records.length;
+  playBeep(1250, 0.12);
+  alert('Registro guardado en el historial de PHYSIO-SCREEN.');
+}
+
+function renderHistoryList() {
+  const container = document.getElementById('historyListContainer');
+  if (!APP.records.length) {
+    container.innerHTML = '<p style="font-size:12px; color:var(--text-secondary);">A\u00fan no hay intentos guardados.</p>';
+    return;
+  }
+  container.innerHTML = APP.records.map(rec => `
+    <div class="athlete-item" onclick="loadRecordFromHistory('${rec.id}')" style="cursor:pointer;">
+      <div class="athlete-meta">
+        <h4>${rec.athleteName} \u2022 <span style="color:var(--emerald-bright);">${rec.kpi1.val}</span></h4>
+        <span>${rec.protocol} (${rec.date}) \u2022 ${rec.status}</span>
+      </div>
+      <span style="font-size:11px; color:var(--text-secondary);">Ver \u2192</span>
+    </div>
+  `).join('');
+}
+
+function loadRecordFromHistory(id) {
+  const found = APP.records.find(r => r.id === id);
+  if (found) {
+    APP.currentRecord = found;
+    switchAnalysisTab('detail', document.querySelector('#screen-analysis .tab-btn'));
+    renderAnalysisScreen();
+  }
+}
+
+function clearSessionHistory() {
+  APP.records = [];
+  localStorage.removeItem('ps_records');
+  renderHistoryList();
+  document.getElementById('historyCountTab').textContent = '0';
+}
+
+function exportCSV() {
+  const list = APP.records.length ? APP.records : (APP.currentRecord ? [APP.currentRecord] : []);
+  if (!list.length) return;
+  const headers = ['Fecha', 'Atleta', 'Protocolo', 'Resultado_Principal', 'KPI_2', 'KPI_3', 'Estado', 'Observaciones'];
+  const lines = [headers.join(',')];
+  list.forEach(r => {
+    lines.push([
+      `"${r.date}"`,
+      `"${r.athleteName}"`,
+      `"${r.protocol}"`,
+      `"${r.kpi1.val}"`,
+      `"${r.kpi2.val}"`,
+      `"${r.kpi3.val}"`,
+      `"${r.status}"`,
+      `"${(r.notes || '').replace(/"/g, '""')}"`
+    ].join(','));
+  });
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `PHYSIO-SCREEN_${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+}
+
+function exportPDF() {
+  if (APP.currentRecord) {
+    APP.currentRecord.notes = document.getElementById('resultNotes').value;
+  }
+  window.print();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  syncAthleteSelectors();
+  renderAthletes();
+  requestAnimationFrame(renderLoop);
+});
+</script>
+</body>
+</html>
